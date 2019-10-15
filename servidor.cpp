@@ -17,28 +17,27 @@ int main(int argc, char const *argv[])
     int a = 0, b = 0;
 
 	Respuesta respuesta = Respuesta(7200);
-    
 
-    while(1)
-    {
-       msj = respuesta.getRequest();
-       // Obtiene números de la cadena:
-       sscanf(msj->arguments, "%d %d", &a, &b);
+  while(1)
+  {
+     msj = respuesta.getRequest();
+     // Obtiene números de la cadena:
+     sscanf(msj->arguments, "%d %d", &a, &b);
 
-       // Construye una cadena con el resultado de la operación:
+     // Construye una cadena con el resultado de la operación:
 
-       switch (msj->operationId)
-       {
-       		case suma:
-       			sprintf(message, "%d + %d = %d", a, b, a+b);
-       			break;
-   			default:
-   				strcpy(message, "operación no soportada\n");
-       			break;
-       }
+     switch (msj->operationId)
+     {
+     		case suma:
+     			sprintf(message, "%d + %d = %d", a, b, a+b);
+     			break;
+ 			  default:
+ 				  strcpy(message, "operación no soportada\n");
+     			break;
+     }
 
-       respuesta.sendReply(message);
-    }
+     respuesta.sendReply(message);
+  }
     
 	return 0;
 }

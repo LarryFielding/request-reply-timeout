@@ -9,6 +9,7 @@
 #include <arpa/inet.h>
 #include <netinet/in.h>
 #include <netdb.h>
+#include <errno.h>
 #include <iostream>
 
 using namespace std;
@@ -31,16 +32,8 @@ SocketDatagrama::SocketDatagrama(int puerto)
 	direccionLocal.sin_family = AF_INET;
 	direccionLocal.sin_addr.s_addr = INADDR_ANY;
 	direccionLocal.sin_port = htons(puerto);
-	
-	/* Paso 3: asegurarse de que se puede utilizar el puerto */
 
-	if (setsockopt(s,SOL_SOCKET,SO_BROADCAST,&opc,sizeof(int)) < 0)
-	{
-        perror("setsockopt");
-        exit(1);
-    } 
-
-	/* Paso 4: publicar direccion */
+	/* Paso 3: publicar direccion */
 
 	if ((bind(s, (struct sockaddr *)&direccionLocal, sizeof(direccionLocal))) < 0)
 	{
@@ -147,6 +140,49 @@ int SocketDatagrama::enviaMensaje(PaqueteDatagrama &p)
 	}
 
 	return bytes_env;
+}
+
+int SocketDatagrama::recibeTimeout(PaqueteDatagrama & p, time_t segundos, suseconds_t microsegundos)
+{
+
+	int bytes_recv;
+	socklen_t tam_dir;
+	char ipRemota[INET_ADDRSTRLEN];
+	
+	tam_dir = sizeof(direccionForanea);
+
+	struct mensaje temp;
+
+	// Inicialización y uso del timeout:
+
+	timeout.tv_sec = segundos;
+	timeout.tv_usec = microsegundos;
+	if (setsockopt(s, SOL_SOCKET, SO_RCVTIMEO, (char *)&timeout, sizeof(timeout)) < 0)
+	{
+		perror("No se pudo establecer el timeout.\n");
+		exit(1);
+	}
+	
+	bytes_recv = recvfrom(s, &temp, sizeof(temp), 0, (struct sockaddr *) &direccionForanea, &tam_dir);
+	if (bytes_recv < 0)
+	{
+		if (errno == EWOULDBLOCK)
+		{
+			fprintf(stderr, "Tiempo para recepción transcurrido\n");
+		}
+		else
+		{
+			fprintf(stderr, "Error en recvfrom\n");
+		}
+	}
+	/* Imprimir en consola la dirección y puerto del host remoto (asignarlas a PaqueteDatagrama)*/
+	
+	inet_ntop(AF_INET, &(direccionForanea.sin_addr), ipRemota, INET_ADDRSTRLEN);
+	p.inicializaIp(ipRemota);
+	p.inicializaPuerto(htons(direccionForanea.sin_port));
+	p.inicializaMensaje(&temp);
+	
+	return bytes_recv;
 }
 
 const void * SocketDatagrama::obtieneDireccionForanea()

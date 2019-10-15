@@ -52,9 +52,19 @@ public:
 	 */
 	int envia(PaqueteDatagrama & p);
 
+	/**
+	 * @brief Envía un paquete de tipo datagrama. El contenido
+	 * es una struct mensaje.
+	 * @details Diseñado para el protocolo petición-respuesta.
+	 * 
+	 * @param p Paquete datagrama configurado previamente.
+	 * @return Número de bytes enviados.
+	 */
 	int enviaMensaje(PaqueteDatagrama & p);
 
 	int recibeMensaje(PaqueteDatagrama & p);
+
+	int recibeTimeout(PaqueteDatagrama & p, time_t segundos, suseconds_t microsegundos);
 
 	const void * obtieneDireccionForanea();
 
@@ -64,6 +74,7 @@ private:
 
 	struct sockaddr_in direccionLocal;
 	struct sockaddr_in direccionForanea;
+	struct timeval timeout;
 	int s; //ID socket
 };
 

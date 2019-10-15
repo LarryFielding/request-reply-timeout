@@ -16,7 +16,7 @@ Solicitud::Solicitud() : msjId(0)
 
 char * Solicitud::doOperation(char *IP, int puerto, int operationId, const char *arguments)
 {
-	int bytes_env, bytes_recv;
+	int bytes_env, bytes_recv, times = 0;
 
 	// Crear mensaje que se envía:
 	struct mensaje cmensaje;
@@ -26,25 +26,16 @@ char * Solicitud::doOperation(char *IP, int puerto, int operationId, const char 
     strcpy(cmensaje.arguments, arguments);
 	// Adjuntar al paquete datagrama:
 	PaqueteDatagrama paquete_env = PaqueteDatagrama(&cmensaje, sizeof(cmensaje), IP, puerto);
-
-	// Enviar:
-	bytes_env = socketLocal->enviaMensaje(paquete_env);
-
-	if (bytes_env < 0)
-    {
-        perror("Fallo en envio");
-        exit(1);
-    }
-
     PaqueteDatagrama paquete_recv = PaqueteDatagrama(MAX_BUFF_TAM);
 
-    bytes_recv = socketLocal->recibeMensaje(paquete_recv);
-
-    if (bytes_recv < 0)
+    do
     {
-        perror("Error al recibir");
-        exit(1);
-    }
+    	// Enviar:
+    	bytes_env = socketLocal->enviaMensaje(paquete_env);
+        // Recibir:
+        bytes_recv = socketLocal->recibeTimeout(paquete_recv, 2, 500000);
+
+    } while (++times < 7 && bytes_recv < 0);
 
     return paquete_recv.obtieneMensaje()->arguments;
 }

@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string>
+#include <string.h>
 #include <iostream>
 
 using namespace std;
@@ -36,7 +37,15 @@ int main(int argc, char const *argv[])
 
     char * respuesta = solicitud.doOperation(ipRemota, puertoRemoto, suma, cargs);
 
-    cout << "Respuesta del servidor: " << respuesta << endl;
+    if (strlen(respuesta) > 0)
+    {
+        cout << "Respuesta del servidor: " << respuesta << endl;
+    }
+    else
+    {
+        cout << "No se obtuvo respuesta." << endl;   
+    }
+
 
 	return 0;
 }
