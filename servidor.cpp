@@ -28,12 +28,12 @@ int main(int argc, char const *argv[])
 
      switch (msj->operationId)
      {
-     		case suma:
-     			sprintf(message, "%d + %d = %d", a, b, a+b);
-     			break;
- 			  default:
- 				  strcpy(message, "operación no soportada\n");
-     			break;
+     	case suma:
+     		sprintf(message, "%d + %d = %d", a, b, a+b);
+     		break;
+ 		default:
+ 			strcpy(message, "operación no soportada\n");
+     		break;
      }
 
      respuesta.sendReply(message);

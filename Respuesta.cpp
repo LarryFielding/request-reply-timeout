@@ -35,9 +35,6 @@ struct mensaje * Respuesta::getRequest(void)
         // Obtener numeros de la cadena y operarlos
 
         cout << "Argumentos: " << paquete_recv.obtieneMensaje()->arguments << endl;
-
-        //PaqueteDatagrama paquete_env = PaqueteDatagrama(crespuesta, tam, ipRemota, puertoRemoto);
-        //bytes_env = socket.envia(paquete_env);
     }
 
 	return paquete_recv.obtieneMensaje();

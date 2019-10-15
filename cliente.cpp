@@ -11,41 +11,33 @@ using namespace std;
 
 int main(int argc, char const *argv[])
 {
-    if (argc != 3)
+    if (argc != 4)
     {
-    	cout << "Debe ingresar: ./main_c <int 1> <int 2>" << endl;
+    	cout << "Debe ingresar: ./main_c <puerto> <IP> <num solicitudes>" << endl;
     	return -1;
     }
 
-    int puertoRemoto;
+    int puertoRemoto = atoi(argv[1]), n = atoi(argv[3]);
     char ipRemota[50];
-    string args;
-    args += argv[1];
-    args += " ";
-    args += argv[2];
-    const char * cargs = args.c_str();
-
-	cout << "Soy cliente" << endl;
-    cout << "Ingrese puerto remoto: ";
-    cin >> puertoRemoto;
-    cout << "Ingrese ip del servidor: ";
-    cin >> ipRemota;
-    cin.ignore();
-
+    strcpy(ipRemota, argv[2]);
+    const char * cargs = "99 1";
     
     Solicitud solicitud = Solicitud();
-
-    char * respuesta = solicitud.doOperation(ipRemota, puertoRemoto, suma, cargs);
-
-    if (strlen(respuesta) > 0)
+    cout << "Se harán " << n << " solicitudes." << endl;
+    for (int i = 0; i < n; ++i)
     {
-        cout << "Respuesta del servidor: " << respuesta << endl;
-    }
-    else
-    {
-        cout << "No se obtuvo respuesta." << endl;   
-    }
+        char * respuesta = solicitud.doOperation(ipRemota, puertoRemoto, suma, cargs);
 
+        if (strlen(respuesta) > 0)
+        {
+            cout << "Respuesta del servidor: " << respuesta << endl;
+        }
+        else
+        {
+            cout << "No se obtuvo respuesta." << endl;   
+        }
+        
+    }
 
 	return 0;
 }
